@@ -11,6 +11,6 @@ The files are not included here, because Kaggle's competition rules don't allow 
 | `test.csv` | 418 | Passenger details without `Survived`; predict these |
 | `gender_submission.csv` | 418 | Example submission (all women survive) |
 
-On Kaggle Notebooks the files are at `/kaggle/input/competitions/titanic/`. The notebook finds them automatically.
+To run locally, put the three files in this `data/` folder (CSV files here are git-ignored). On Kaggle Notebooks they are at `/kaggle/input/competitions/titanic/`. The notebooks find them automatically in either place.
 
 Citation: Will Cukierski. *Titanic - Machine Learning from Disaster.* Kaggle, 2012.

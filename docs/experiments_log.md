@@ -62,9 +62,10 @@ Notebook: `notebooks/Titanic_Experiments_XGBoost_Blending.ipynb`. All candidates
 - Group features (FarePerPerson, TicketGroupSize, Sex × Pclass) added about +0.5 points to XGBoost.
 - FamilySurvival lifted every model to the family rule's level.
 - Blending and the blend + rule hybrid scored highest, but only +0.3 points, winning about half the splits: within noise.
-- **Not submitted yet.** Test predictions saved in `submissions/candidates_not_submitted/`. The blend + rule file differs from the submitted family-group file on 18 passengers.
+- **Submitted the blend + family rule: Kaggle 0.78229 (327/418)**, 8 passengers fewer than the family rule. It differed from the family-rule file on 18 test passengers, and the family rule was right on 13 of them.
+- **Lesson:** a +0.34-point CV edge that won only 13 of 25 splits was noise. The simpler family rule stays the best model.
+- The other candidates (XGBoost, blend without the rule) remain unsubmitted in `submissions/candidates_not_submitted/`.
 
 ## Ideas not yet tried
-- Submit the blend + family-rule candidate to see whether its small CV edge holds on the test set.
 - Tune the blend weights on out-of-fold probabilities instead of a plain average.
 - Average XGBoost and Random Forest over several random seeds.

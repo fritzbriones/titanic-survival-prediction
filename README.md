@@ -15,11 +15,12 @@ Predicting which passengers survived the Titanic, for Kaggle's [Titanic - Machin
 | v1 | Random Forest, 8 features, depth 7, balanced class weights | 81.7% | 0.77511 |
 | v2 | Random Forest + Title, age-by-title, HasCabin, depth 5 | 83.0% | 0.77272 |
 | **Final** | **Family-group rule (woman-child-group)** | **84.1%** | **0.80143** |
+| Experiment | Blend (RF + XGBoost + LR) + family-rule overrides | 84.5% | 0.78229 |
 | Reference | Gender rule only (all women survive) | 78.7% | 0.76555 |
 
 \*Repeated stratified cross-validation, 5 folds × 5 repeats, on the 891 training passengers.
 
-Newer experiments (XGBoost, group features, probability blending) have cross-validation results only, because they haven't been submitted yet; see [Experiments](#4-experiments-xgboost-group-features-and-blending). Every submission is listed in the [leaderboard history](docs/leaderboard.md).
+The blend scored highest in cross-validation but lower on Kaggle (see below). Other experiments (XGBoost, group features) have cross-validation results only, because they haven't been submitted; see [Experiments](#4-experiments-xgboost-group-features-and-blending). Every submission is listed in the [leaderboard history](docs/leaderboard.md).
 
 The score is plain accuracy over all 418 test passengers, so each passenger is worth about 0.24 percentage points. The gender-rule score is Kaggle's example submission. Full details: [`results/model_comparison.csv`](results/model_comparison.csv) and the [experiments log](docs/experiments_log.md).
 
@@ -58,7 +59,7 @@ Notebook: [`Titanic_Experiments_XGBoost_Blending.ipynb`](notebooks/Titanic_Exper
 
 | Candidate | CV accuracy | vs family rule (wins / ties / losses over 25 splits) |
 |---|---|---|
-| Blend (RF + XGBoost + LR probabilities) + family rule | 84.47% | +0.34 pts (13 / 2 / 10) |
+| Blend (RF + XGBoost + LR probabilities) + family rule | 84.47% | +0.34 pts (13 / 2 / 10). **Kaggle: 0.78229** |
 | Blend (RF + XGBoost + LR probabilities) | 84.42% | +0.29 pts (13 / 1 / 11) |
 | Random Forest + group features + FamilySurvival | 84.40% | +0.27 pts (13 / 6 / 6) |
 | XGBoost + group features + FamilySurvival | 84.29% | +0.16 pts (12 / 2 / 11) |
@@ -68,7 +69,9 @@ Notebook: [`Titanic_Experiments_XGBoost_Blending.ipynb`](notebooks/Titanic_Exper
 
 Group features: **FarePerPerson** (fare divided by passengers on the ticket), **TicketGroupSize**, **Sex × Pclass**, and **FamilySurvival** (survival rate of the other women and boys in the passenger's family or ticket group, from the training fold only).
 
-**Finding:** group features helped every model, and FamilySurvival was what brought the machine-learning models level with the family-group rule. But the best gains are about a third of a point, won on only about half of the splits. That's well within noise, so none of these candidates is clearly better than the submitted rule. Their predictions are saved in `submissions/candidates_not_submitted/`; the blend-plus-rule file differs from the submitted one on 18 passengers.
+**Finding:** group features helped every model, and FamilySurvival was what brought the machine-learning models level with the family-group rule. But the best gains are about a third of a point, won on only about half of the splits, which is within noise.
+
+**Kaggle confirmed it.** The top cross-validation candidate (blend + family rule) scored **0.78229** (327/418), 8 passengers fewer than the simple family rule. The two files differ on 18 test passengers, and the family rule was right on 13 of them. The simpler model stays the best. Unsubmitted candidates are in `submissions/candidates_not_submitted/`.
 
 ## Why 84.1% in cross-validation but 80.1% on Kaggle?
 The family-group rule scored 84.1% in cross-validation and 80.1% on Kaggle. A gap like this is expected, for four reasons:
@@ -97,7 +100,8 @@ submissions/
   v1_random_forest.csv                    0.77511
   v2_random_forest.csv                    0.77272
   family_groups.csv                       0.80143
-  candidates_not_submitted/               CV results only (XGBoost, blends, gradient boosting)
+  blend_plus_family_rule.csv              0.78229
+  candidates_not_submitted/               CV results only (XGBoost, blend, gradient boosting)
 results/
   model_comparison.csv                    every model, its features, CV and Kaggle score
 docs/
@@ -105,23 +109,55 @@ docs/
   leaderboard.md                          every Kaggle submission and its score
 images/                                   charts used in this README
 data/
-  README.md                               how to get the data
+  README.md                               how to get the data (CSV files are git-ignored)
+requirements.txt                          Python packages for running locally
 ```
 
 ## How to run
-On Kaggle (recommended):
-1. Open the [Titanic competition](https://www.kaggle.com/competitions/titanic), sign in and click **Join Competition** to accept the rules.
-2. Create a notebook and attach the data. Either:
-   - go to the competition's **Code** tab and click **New Notebook**, which attaches the data automatically; or
-   - in any notebook, click **+ Add Input** in the right-hand panel, search for **Titanic - Machine Learning from Disaster**, and add the **competition** (not a dataset copy).
-3. Check the data is attached: the first code cell should print `train.csv`, `test.csv` and `gender_submission.csv` under `/kaggle/input/`.
-4. Import the notebook: **File → Import Notebook**, then upload `notebooks/Titanic_Random_Forest_Classification_v2.ipynb`.
-5. Run it: **Save Version → Save & Run All (Commit)**.
+The notebooks run on **Kaggle** or on **your own computer**. They find the data automatically in either place.
+
+### Option A: on your computer
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/fritzbriones/titanic-survival-prediction.git
+   cd titanic-survival-prediction
+   ```
+2. **Install the packages** (Python 3.9+)
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Download the data.** Sign in to Kaggle, join the [Titanic competition](https://www.kaggle.com/competitions/titanic) to accept the rules, and download the files from its [Data page](https://www.kaggle.com/competitions/titanic/data). Put these in the repo's `data/` folder:
+   - `train.csv`
+   - `test.csv`
+   - `gender_submission.csv`
+
+   The data folder ignores CSV files, so the competition data won't be committed by accident.
+4. **Start Jupyter** from the project folder:
+   ```bash
+   jupyter notebook
+   ```
+5. **Open a notebook** in `notebooks/`:
+   - `Titanic_Random_Forest_Classification_v2.ipynb`: exploration, Random Forest models and the family-group rule (writes `submission.csv`, which scores 0.80143)
+   - `Titanic_Experiments_XGBoost_Blending.ipynb`: XGBoost, group features and blending
+6. **Run it:** **Kernel → Restart & Run All**. Output files are saved next to the notebook.
+
+### Option B: on Kaggle
+1. Open the [Titanic competition](https://www.kaggle.com/competitions/titanic), sign in and click **Join Competition**.
+2. **Attach the data**, either way:
+   - from the competition's **Code** tab, click **New Notebook** (the data is attached automatically); or
+   - in any notebook, click **+ Add Input**, search for **Titanic - Machine Learning from Disaster**, and add the **competition** (not a dataset copy).
+3. **Check it's attached:** the first code cell should print `train.csv`, `test.csv` and `gender_submission.csv` under `/kaggle/input/`.
+4. **Import the notebook:** **File → Import Notebook**, then upload `notebooks/Titanic_Random_Forest_Classification_v2.ipynb`.
+5. **Save Version → Save & Run All (Commit).**
 6. Open the saved version's **Output** tab and submit `submission.csv` (expected score 0.80143).
 
-If the data loading cell says *"Titanic data not found"*, the competition data isn't attached yet; repeat step 2.
+If a notebook says *"train.csv not found"*, the data isn't in `data/` (local) or isn't attached (Kaggle).
 
-The competition data is not included in this repository; see [`data/README.md`](data/README.md).
+### Explore the results
+- [`results/model_comparison.csv`](results/model_comparison.csv): every model, its features, CV and Kaggle score
+- [`docs/leaderboard.md`](docs/leaderboard.md): every Kaggle submission
+- [`docs/experiments_log.md`](docs/experiments_log.md): every experiment, including the ones that didn't help
+- [`images/`](images/): the charts in this README
 
 ## Citations
 - Will Cukierski. *Titanic - Machine Learning from Disaster.* Kaggle, 2012. https://www.kaggle.com/competitions/titanic

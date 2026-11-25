@@ -10,4 +10,4 @@ exp-3,XGBoost,"exp-2 + FamilySurvival (fold-safe)",84.29,2.18,,,no,submissions/c
 exp-4,Random Forest,"exp-2 + FamilySurvival (fold-safe)",84.40,2.38,,,no,
 exp-5,Logistic regression,"exp-2 + FamilySurvival (fold-safe)",83.86,2.40,,,no,
 exp-6,"Blend: average of RF, XGBoost and LR probabilities","exp-2 + FamilySurvival (fold-safe)",84.42,2.40,,,no,submissions/candidates_not_submitted/candidate_blend.csv
-exp-7,Blend + family-group rule overrides,"exp-6 + family rule",84.47,2.32,,,no,submissions/candidates_not_submitted/candidate_blend_plus_family_rule.csv
+exp-7,Blend + family-group rule overrides,"exp-6 + family rule",84.47,2.32,0.78229,327,yes,submissions/blend_plus_family_rule.csv
