@@ -1,0 +1,2 @@
+# Files the notebooks write when run (submission.csv, candidates); final copies live in submissions/
+*.csv
