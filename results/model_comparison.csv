@@ -1,0 +1,6 @@
+version,approach,features,cv_accuracy_pct,kaggle_public_score,correct_of_418,submission_file
+reference,Gender rule (all women survive),Sex,78.7,0.76555,320,
+v1,"Random Forest (200 trees, depth 7, balanced class weights)","Pclass, Sex, Age, SibSp, Parch, Fare, Embarked, FamilySize",81.7,0.77511,324,submissions/v1_random_forest.csv
+v2,"Random Forest (300 trees, depth 5, min leaf 2)","v1 + Title, age filled by title, HasCabin",83.0,0.77272,323,submissions/v2_random_forest.csv
+v2-gb,"Gradient Boosting (150 trees, depth 3)","same as v2",83.3,,,submissions/v2_gradient_boosting_not_submitted.csv
+final,Family-group rule (woman-child-group),"Sex, Title (boys), family groups from surname/class/ticket/port/fare",84.1,0.80143,335,submissions/family_groups.csv

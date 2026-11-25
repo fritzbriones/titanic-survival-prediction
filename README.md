@@ -13,12 +13,20 @@ Predicting which passengers survived the Titanic, for Kaggle's [Titanic - Machin
 
 \*Repeated stratified cross-validation, 5 folds × 5 repeats, on the 891 training passengers.
 
-The score is plain accuracy over all 418 test passengers, so each passenger is worth about 0.24 percentage points.
+The score is plain accuracy over all 418 test passengers, so each passenger is worth about 0.24 percentage points. The gender-rule score is Kaggle's example submission. Full details: [`results/model_comparison.csv`](results/model_comparison.csv) and the [experiments log](docs/experiments_log.md).
+
+![Kaggle score by model](images/model_scores.png)
 
 ## Approach
 
 ### 1. Exploration
 Survival was driven mostly by **sex** (74% of women survived vs 19% of men), **class** (63% in 1st vs 24% in 3rd) and **family size** (small families survived more often than people travelling alone or in large families).
+
+![Survival by sex and class](images/survival_sex_class.png)
+
+![Survival by title](images/survival_by_title.png)
+
+![Survival by family size](images/survival_by_family_size.png)
 
 ### 2. Random Forest (v1 and v2)
 A scikit-learn `Pipeline` handles imputation and one-hot encoding inside cross-validation. v2 adds:
@@ -53,6 +61,11 @@ submissions/
   v2_random_forest.csv                    0.77272
   family_groups.csv                       0.80143
   v2_gradient_boosting_not_submitted.csv  83.3% CV, not submitted
+results/
+  model_comparison.csv                    every model, its features, CV and Kaggle score
+docs/
+  experiments_log.md                      every experiment, including the ones that didn't help
+images/                                   charts used in this README
 data/
   README.md                               how to get the data
 ```
