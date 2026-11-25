@@ -1,6 +1,13 @@
-version,approach,features,cv_accuracy_pct,kaggle_public_score,correct_of_418,submission_file
-reference,Gender rule (all women survive),Sex,78.7,0.76555,320,
-v1,"Random Forest (200 trees, depth 7, balanced class weights)","Pclass, Sex, Age, SibSp, Parch, Fare, Embarked, FamilySize",81.7,0.77511,324,submissions/v1_random_forest.csv
-v2,"Random Forest (300 trees, depth 5, min leaf 2)","v1 + Title, age filled by title, HasCabin",83.0,0.77272,323,submissions/v2_random_forest.csv
-v2-gb,"Gradient Boosting (150 trees, depth 3)","same as v2",83.3,,,submissions/v2_gradient_boosting_not_submitted.csv
-final,Family-group rule (woman-child-group),"Sex, Title (boys), family groups from surname/class/ticket/port/fare",84.1,0.80143,335,submissions/family_groups.csv
+version,approach,features,cv_accuracy_pct,cv_std_pct,kaggle_public_score,correct_of_418,submitted,submission_file
+reference,Gender rule (all women survive),Sex,78.68,2.57,0.76555,320,Kaggle example file,
+v1,"Random Forest (200 trees, depth 7, balanced class weights)","Pclass, Sex, Age, SibSp, Parch, Fare, Embarked, FamilySize",81.71,2.79,0.77511,324,yes,submissions/v1_random_forest.csv
+v2,"Random Forest (300 trees, depth 5, min leaf 2)","v1 + Title, age filled by title, HasCabin",83.03,2.24,0.77272,323,yes,submissions/v2_random_forest.csv
+v2-gb,"Gradient Boosting (150 trees, depth 3)",same as v2,83.25,2.22,,,no,submissions/candidates_not_submitted/v2_gradient_boosting.csv
+final,Family-group rule (woman-child-group),"Sex, boys (Master), family groups from surname/class/ticket/port/fare",84.13,2.55,0.80143,335,yes,submissions/family_groups.csv
+exp-1,"XGBoost (300 trees, depth 3, lr 0.05)",same as v2,83.39,2.15,,,no,submissions/candidates_not_submitted/candidate_xgboost_v2.csv
+exp-2,XGBoost,"v2 + FarePerPerson, TicketGroupSize, Sex x Pclass",83.91,1.97,,,no,
+exp-3,XGBoost,"exp-2 + FamilySurvival (fold-safe)",84.29,2.18,,,no,submissions/candidates_not_submitted/candidate_xgboost_group_family.csv
+exp-4,Random Forest,"exp-2 + FamilySurvival (fold-safe)",84.40,2.38,,,no,
+exp-5,Logistic regression,"exp-2 + FamilySurvival (fold-safe)",83.86,2.40,,,no,
+exp-6,"Blend: average of RF, XGBoost and LR probabilities","exp-2 + FamilySurvival (fold-safe)",84.42,2.40,,,no,submissions/candidates_not_submitted/candidate_blend.csv
+exp-7,Blend + family-group rule overrides,"exp-6 + family rule",84.47,2.32,,,no,submissions/candidates_not_submitted/candidate_blend_plus_family_rule.csv

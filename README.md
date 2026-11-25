@@ -19,6 +19,8 @@ Predicting which passengers survived the Titanic, for Kaggle's [Titanic - Machin
 
 \*Repeated stratified cross-validation, 5 folds × 5 repeats, on the 891 training passengers.
 
+Newer experiments (XGBoost, group features, probability blending) have cross-validation results only, because they haven't been submitted yet; see [Experiments](#4-experiments-xgboost-group-features-and-blending). Every submission is listed in the [leaderboard history](docs/leaderboard.md).
+
 The score is plain accuracy over all 418 test passengers, so each passenger is worth about 0.24 percentage points. The gender-rule score is Kaggle's example submission. Full details: [`results/model_comparison.csv`](results/model_comparison.csv) and the [experiments log](docs/experiments_log.md).
 
 ![Kaggle score by model](images/model_scores.png)
@@ -51,10 +53,38 @@ Families tended to live or die together. Starting from the gender rule:
 
 It changes only 17 predictions from the gender rule, and 16 of them turned out correct (+15 net), lifting the score from 0.76555 to 0.80143.
 
+### 4. Experiments: XGBoost, group features and blending
+Notebook: [`Titanic_Experiments_XGBoost_Blending.ipynb`](notebooks/Titanic_Experiments_XGBoost_Blending.ipynb). Every candidate is scored on the same 25 cross-validation splits. Anything learned from survival labels (age medians, family survival rates, the family rules) is rebuilt inside each training fold, so there is no leakage.
+
+| Candidate | CV accuracy | vs family rule (wins / ties / losses over 25 splits) |
+|---|---|---|
+| Blend (RF + XGBoost + LR probabilities) + family rule | 84.47% | +0.34 pts (13 / 2 / 10) |
+| Blend (RF + XGBoost + LR probabilities) | 84.42% | +0.29 pts (13 / 1 / 11) |
+| Random Forest + group features + FamilySurvival | 84.40% | +0.27 pts (13 / 6 / 6) |
+| XGBoost + group features + FamilySurvival | 84.29% | +0.16 pts (12 / 2 / 11) |
+| **Family-group rule (submitted, 0.80143)** | **84.13%** | — |
+| XGBoost + group features | 83.91% | −0.22 pts |
+| XGBoost, v2 features | 83.39% | −0.74 pts |
+
+Group features: **FarePerPerson** (fare divided by passengers on the ticket), **TicketGroupSize**, **Sex × Pclass**, and **FamilySurvival** (survival rate of the other women and boys in the passenger's family or ticket group, from the training fold only).
+
+**Finding:** group features helped every model, and FamilySurvival was what brought the machine-learning models level with the family-group rule. But the best gains are about a third of a point, won on only about half of the splits. That's well within noise, so none of these candidates is clearly better than the submitted rule. Their predictions are saved in `submissions/candidates_not_submitted/`; the blend-plus-rule file differs from the submitted one on 18 passengers.
+
+## Why 84.1% in cross-validation but 80.1% on Kaggle?
+The family-group rule scored 84.1% in cross-validation and 80.1% on Kaggle. A gap like this is expected, for four reasons:
+
+1. **The test set is small.** With 418 passengers, a score of about 80% has a standard error of about ±2 points, so a single test set can easily land 2–4 points away from the long-run accuracy.
+2. **The test set looks slightly harder.** Even the one-line gender rule drops from 78.7% in cross-validation to 76.6% on Kaggle, a 2-point gap with no model tuning at all. Part of every model's gap comes from the test passengers themselves.
+3. **Fewer family matches.** The family rule only helps when a test passenger has relatives in the training data. In cross-validation, each validation fold has the other 80% of passengers to match against. On Kaggle, the rule found 17 passengers to change out of 418.
+4. **Choosing the best of several scores flatters it.** When the highest of many cross-validation results is picked, it's usually a little optimistic.
+
+The useful comparison is between models on the **same** data: the family rule beat the gender rule by 5.5 points in cross-validation and by 3.6 points on Kaggle, so the improvement was real even though both absolute numbers dropped.
+
 ## Lessons learned
 - **Watch for data leakage.** An early "tuned" validation score of 89.94% was inflated because the grid search had already seen the validation rows. Retraining on the training split only gave an honest 80.45%.
 - **Tune with repeated cross-validation, not one split.** A 179-row validation split is too small to choose settings reliably.
-- **Domain structure beats model complexity here.** A few rules about families did better than tuned Random Forests.
+- **Domain structure beats model complexity here.** A few rules about families did better than tuned Random Forests, and machine-learning models only caught up once they were given a family-survival feature.
+- **Compare models on the same splits.** Paired results (wins / ties / losses) show whether a small difference is real; a 0.3-point gain won on half the splits is not.
 
 ## Repository contents
 
@@ -62,15 +92,17 @@ It changes only 17 predictions from the gender rule, and 16 of them turned out c
 notebooks/
   Titanic_Random_Forest_Classification_v1.ipynb   original notebook (0.77511)
   Titanic_Random_Forest_Classification_v2.ipynb   final notebook: RF v2 + family-group model
+  Titanic_Experiments_XGBoost_Blending.ipynb      XGBoost, group features, blending
 submissions/
   v1_random_forest.csv                    0.77511
   v2_random_forest.csv                    0.77272
   family_groups.csv                       0.80143
-  v2_gradient_boosting_not_submitted.csv  83.3% CV, not submitted
+  candidates_not_submitted/               CV results only (XGBoost, blends, gradient boosting)
 results/
   model_comparison.csv                    every model, its features, CV and Kaggle score
 docs/
   experiments_log.md                      every experiment, including the ones that didn't help
+  leaderboard.md                          every Kaggle submission and its score
 images/                                   charts used in this README
 data/
   README.md                               how to get the data
