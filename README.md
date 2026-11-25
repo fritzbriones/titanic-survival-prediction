@@ -77,9 +77,17 @@ data/
 ```
 
 ## How to run
-1. Open the competition on Kaggle and accept the rules.
-2. Create a notebook from the competition's **Code** tab (this attaches the data), then **File → Import Notebook** with `notebooks/Titanic_Random_Forest_Classification_v2.ipynb`.
-3. **Save Version → Save & Run All**. The final section writes `submission.csv`.
+On Kaggle (recommended):
+1. Open the [Titanic competition](https://www.kaggle.com/competitions/titanic), sign in and click **Join Competition** to accept the rules.
+2. Create a notebook and attach the data. Either:
+   - go to the competition's **Code** tab and click **New Notebook**, which attaches the data automatically; or
+   - in any notebook, click **+ Add Input** in the right-hand panel, search for **Titanic - Machine Learning from Disaster**, and add the **competition** (not a dataset copy).
+3. Check the data is attached: the first code cell should print `train.csv`, `test.csv` and `gender_submission.csv` under `/kaggle/input/`.
+4. Import the notebook: **File → Import Notebook**, then upload `notebooks/Titanic_Random_Forest_Classification_v2.ipynb`.
+5. Run it: **Save Version → Save & Run All (Commit)**.
+6. Open the saved version's **Output** tab and submit `submission.csv` (expected score 0.80143).
+
+If the data loading cell says *"Titanic data not found"*, the competition data isn't attached yet; repeat step 2.
 
 The competition data is not included in this repository; see [`data/README.md`](data/README.md).
 
