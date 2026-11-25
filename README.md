@@ -1,5 +1,11 @@
 # Titanic Survival Prediction
 
+<p align="center">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Titanic_in_color.png?width=1200" alt="RMS Titanic leaving Southampton, 10 April 1912" width="800">
+  <br>
+  <sub>RMS <i>Titanic</i> leaving Southampton on her maiden voyage, 10 April 1912. Photo: F.G.O. Stuart, colorized; public domain, via <a href="https://commons.wikimedia.org/wiki/File:Titanic_in_color.png">Wikimedia Commons</a>.</sub>
+</p>
+
 Predicting which passengers survived the Titanic, for Kaggle's [Titanic - Machine Learning from Disaster](https://www.kaggle.com/competitions/titanic) competition. The project goes from a Random Forest baseline to a family-group model that scores **0.80143** on the leaderboard (335 of 418 test passengers correct).
 
 ## Results
