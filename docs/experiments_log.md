@@ -70,9 +70,10 @@ Notebook: `notebooks/Titanic_Experiments_XGBoost_Blending.ipynb`. All candidates
 Notebook: `notebooks/Titanic_Family_Group_Audit.ipynb`. Prompted by a review of the grouping code.
 - **Data quirks checked:** 4 tickets end in a letter (all "LINE"); 2 passengers lack a port (Icard and Stone, same ticket, both in train); 1 lacks a fare (an adult man); no surnames with stray spaces.
 - **8 family definitions** compared on the same 25 stratified splits: 83.66–84.15%. Fixing ticket trimming, or dropping fare and port, changes nothing.
-- **Grouped CV** (whole families kept together, StratifiedGroupKFold, 5 × 5): every definition scores 78.67%, exactly the gender rule. The rule only helps when relatives are in the training data.
+- **Grouped CV** (whole families kept together, StratifiedGroupKFold, 5 × 5): every definition scores 78.67%, exactly the gender rule. The rule only helps when linked passengers are in the training data.
 - **Test-set stability:** all definitions change 15–17 test passengers, nearly all among the submitted 17.
-- **Overlap:** 206 of 418 test passengers (114 of 173 test women and boys) have a relative in the training data.
+- **Paired comparison:** every definition beats the gender rule on all 25 stratified splits (25 / 0 / 0) and ties it on all 25 grouped splits (0 / 25 / 0).
+- **Overlap:** 206 of 418 test passengers (114 of 173 test women and boys) belong to a linked passenger group (shared ticket, or surname and class) represented in the training data. Linked groups are mostly, but not always, biological families.
 - **Conclusion:** the 0.80143 result is robust to the family definition, and it comes from family overlap between train and test. The champion submission is unchanged.
 
 ## Ideas not yet tried

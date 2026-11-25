@@ -33,7 +33,7 @@ The score is plain accuracy over all 418 test passengers, so each passenger is w
 
 - **Real:** 16 of its 17 changed test predictions were correct, and it beat the gender rule on all 25 cross-validation splits (+5.5 points on average).
 - **Robust:** 8 different ways of defining a family give nearly identical results and test predictions.
-- **Bounded:** on families not seen in training (grouped cross-validation), it adds nothing over the gender rule. It works because 206 of the 418 test passengers have a relative in the training data.
+- **Bounded:** on families not seen in training (grouped cross-validation), it adds nothing over the gender rule. It works because 206 of the 418 test passengers belong to a linked passenger group (shared ticket, or surname and class) that is represented in the training data.
 
 ## Limitations
 - **Small data.** 891 training and 418 test passengers; one passenger moves the score by 0.24 points, so differences of a few passengers are noise.
@@ -93,7 +93,7 @@ Group features: **FarePerPerson** (fare divided by passengers on the ticket), **
 ### 5. Auditing the family-group model
 Notebook: [`Titanic_Family_Group_Audit.ipynb`](notebooks/Titanic_Family_Group_Audit.ipynb). It tests whether the 0.80143 result depends on how a "family" is defined, and how the rule does on families it has never seen.
 
-| Family definition | Stratified CV | Grouped CV (unseen families) | Test changes (of submitted 17) |
+| Family definition | Stratified CV | Grouped CV (unseen groups) | Test changes (of submitted 17) |
 |---|---|---|---|
 | Gender rule, no families | 78.68% | 78.67% | — |
 | **Submitted: surname + class + ticket + port + fare, ticket fallback** | **84.13%** | 78.67% | 17 (17) |
@@ -107,8 +107,9 @@ Notebook: [`Titanic_Family_Group_Audit.ipynb`](notebooks/Titanic_Family_Group_Au
 **Findings**
 - **The definition barely matters.** Every reasonable definition scores 83.7–84.2%, and the test-set changes are nearly identical, so 0.80143 is not an artifact of one grouping choice.
 - **The flagged data quirks are tiny:** 4 tickets end in a letter (all "LINE"), 2 passengers lack a port (a maid and her employer on one ticket), and 1 lacks a fare (an adult man, whom the rule never changes).
-- **On unseen families, the rule adds nothing.** Under grouped CV it equals the gender rule, because it can only use relatives already in the training data.
-- **What 0.80143 measures:** 206 of the 418 test passengers have a relative in the training data, and the rule exploits that overlap. That's legitimate for this competition, but it wouldn't help for passengers with no known relatives.
+- **Paired results confirm it.** Every definition beats the gender rule on **all 25** stratified splits (25 wins / 0 ties / 0 losses) and ties it on all 25 grouped splits (0 / 25 / 0).
+- **On unseen groups, the rule adds nothing.** Under grouped CV it equals the gender rule, because it can only use linked passengers already in the training data.
+- **What 0.80143 measures:** 206 of the 418 test passengers belong to a linked passenger group that is represented in the training data, and the rule exploits that overlap. Linked groups come from shared tickets or surname and class, so they are mostly, but not always, biological families. That's legitimate for this competition, but it wouldn't help for passengers with no known relatives.
 
 ## Why 84.1% in cross-validation but 80.1% on Kaggle?
 The family-group rule scored 84.1% in cross-validation and 80.1% on Kaggle. A gap like this is expected, for four reasons:
@@ -178,6 +179,7 @@ The notebooks run on **Kaggle** or on **your own computer**. They find the data 
 5. **Open a notebook** in `notebooks/`:
    - `Titanic_Random_Forest_Classification_v2.ipynb`: exploration, Random Forest models and the family-group rule (writes `submission.csv`, which scores 0.80143)
    - `Titanic_Experiments_XGBoost_Blending.ipynb`: XGBoost, group features and blending
+   - `Titanic_Family_Group_Audit.ipynb`: tests alternative family definitions, data-quality assumptions and grouped validation (runs in seconds)
 6. **Run it:** **Kernel → Restart & Run All**. Output files are saved next to the notebook.
 
 ### Option B: on Kaggle
