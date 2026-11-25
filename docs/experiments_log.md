@@ -66,6 +66,15 @@ Notebook: `notebooks/Titanic_Experiments_XGBoost_Blending.ipynb`. All candidates
 - **Lesson:** a +0.34-point CV edge that won only 13 of 25 splits was noise. The simpler family rule stays the best model.
 - The other candidates (XGBoost, blend without the rule) remain unsubmitted in `submissions/candidates_not_submitted/`.
 
+## 6. Family-group model audit
+Notebook: `notebooks/Titanic_Family_Group_Audit.ipynb`. Prompted by a review of the grouping code.
+- **Data quirks checked:** 4 tickets end in a letter (all "LINE"); 2 passengers lack a port (Icard and Stone, same ticket, both in train); 1 lacks a fare (an adult man); no surnames with stray spaces.
+- **8 family definitions** compared on the same 25 stratified splits: 83.66–84.15%. Fixing ticket trimming, or dropping fare and port, changes nothing.
+- **Grouped CV** (whole families kept together, StratifiedGroupKFold, 5 × 5): every definition scores 78.67%, exactly the gender rule. The rule only helps when relatives are in the training data.
+- **Test-set stability:** all definitions change 15–17 test passengers, nearly all among the submitted 17.
+- **Overlap:** 206 of 418 test passengers (114 of 173 test women and boys) have a relative in the training data.
+- **Conclusion:** the 0.80143 result is robust to the family definition, and it comes from family overlap between train and test. The champion submission is unchanged.
+
 ## Ideas not yet tried
 - Tune the blend weights on out-of-fold probabilities instead of a plain average.
 - Average XGBoost and Random Forest over several random seeds.

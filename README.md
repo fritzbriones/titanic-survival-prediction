@@ -73,6 +73,26 @@ Group features: **FarePerPerson** (fare divided by passengers on the ticket), **
 
 **Kaggle confirmed it.** The top cross-validation candidate (blend + family rule) scored **0.78229** (327/418), 8 passengers fewer than the simple family rule. The two files differ on 18 test passengers, and the family rule was right on 13 of them. The simpler model stays the best. Unsubmitted candidates are in `submissions/candidates_not_submitted/`.
 
+### 5. Auditing the family-group model
+Notebook: [`Titanic_Family_Group_Audit.ipynb`](notebooks/Titanic_Family_Group_Audit.ipynb). It tests whether the 0.80143 result depends on how a "family" is defined, and how the rule does on families it has never seen.
+
+| Family definition | Stratified CV | Grouped CV (unseen families) | Test changes (of submitted 17) |
+|---|---|---|---|
+| Gender rule, no families | 78.68% | 78.67% | — |
+| **Submitted: surname + class + ticket + port + fare, ticket fallback** | **84.13%** | 78.67% | 17 (17) |
+| Trim last digit only, not last character | 84.13% | 78.67% | 17 (17) |
+| Without fare, or without fare and port | 84.13% | 78.67% | 17 (17) |
+| Submitted, without ticket fallback | 84.15% | 78.67% | 16 (16) |
+| Surname + exact ticket | 83.77% | 78.67% | 15 (15) |
+| Exact ticket only | 83.73% | 78.67% | 15 (15) |
+| Surname + class only (loose) | 83.66% | 78.67% | 17 (16) |
+
+**Findings**
+- **The definition barely matters.** Every reasonable definition scores 83.7–84.2%, and the test-set changes are nearly identical, so 0.80143 is not an artifact of one grouping choice.
+- **The flagged data quirks are tiny:** 4 tickets end in a letter (all "LINE"), 2 passengers lack a port (a maid and her employer on one ticket), and 1 lacks a fare (an adult man, whom the rule never changes).
+- **On unseen families, the rule adds nothing.** Under grouped CV it equals the gender rule, because it can only use relatives already in the training data.
+- **What 0.80143 measures:** 206 of the 418 test passengers have a relative in the training data, and the rule exploits that overlap. That's legitimate for this competition, but it wouldn't help for passengers with no known relatives.
+
 ## Why 84.1% in cross-validation but 80.1% on Kaggle?
 The family-group rule scored 84.1% in cross-validation and 80.1% on Kaggle. A gap like this is expected, for four reasons:
 
@@ -87,6 +107,7 @@ The useful comparison is between models on the **same** data: the family rule be
 - **Watch for data leakage.** An early "tuned" validation score of 89.94% was inflated because the grid search had already seen the validation rows. Retraining on the training split only gave an honest 80.45%.
 - **Tune with repeated cross-validation, not one split.** A 179-row validation split is too small to choose settings reliably.
 - **Domain structure beats model complexity here.** A few rules about families did better than tuned Random Forests, and machine-learning models only caught up once they were given a family-survival feature.
+- **Know what your validation measures.** Stratified CV measured performance when relatives are known; grouped CV showed the family rule adds nothing for unseen families.
 - **Compare models on the same splits.** Paired results (wins / ties / losses) show whether a small difference is real; a 0.3-point gain won on half the splits is not.
 
 ## Repository contents
@@ -96,6 +117,7 @@ notebooks/
   Titanic_Random_Forest_Classification_v1.ipynb   original notebook (0.77511)
   Titanic_Random_Forest_Classification_v2.ipynb   final notebook: RF v2 + family-group model
   Titanic_Experiments_XGBoost_Blending.ipynb      XGBoost, group features, blending
+  Titanic_Family_Group_Audit.ipynb                tests the family definition and grouped CV
 submissions/
   v1_random_forest.csv                    0.77511
   v2_random_forest.csv                    0.77272
