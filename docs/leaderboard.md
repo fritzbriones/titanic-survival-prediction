@@ -6,7 +6,7 @@ Every file submitted to Kaggle, in order. Kaggle's Titanic score is accuracy on 
 |---|---|---|---|---|---|---|
 | 1 | 2026-11-26 | `submissions/v1_random_forest.csv` | Random Forest, depth 7, balanced class weights | 0.77511 | 324 | first submission |
 | 2 | 2026-11-26 | `submissions/v2_random_forest.csv` | Random Forest + Title, age by title, HasCabin, depth 5 | 0.77272 | 323 | −1 passenger |
-| 3 | 2026-11-26 | `submissions/family_groups.csv` | Family-group (woman-child-group) rule | **0.80143** | **335** | +12 passengers, current best |
+| 3 | 2026-11-26 | `submissions/family_groups.csv` | Family-group (woman-child-group) rule | **🏆 0.80143** | **335** | +12 passengers, **champion** |
 | 4 | 2026-11-26 | `submissions/blend_plus_family_rule.csv` | Blend of RF + XGBoost + LR probabilities, with family-rule overrides | 0.78229 | 327 | −8 vs best |
 
 Submission 4 had the best cross-validation score (84.47% vs 84.13%) but scored 8 passengers fewer than the family rule. It differed from the family-rule file on 18 test passengers, and the family rule was right on 13 of them. The tiny CV edge did not hold.

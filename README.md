@@ -10,13 +10,15 @@ Predicting which passengers survived the Titanic, for Kaggle's [Titanic - Machin
 
 ## Results
 
-| Version | Approach | CV accuracy* | Public score |
-|---|---|---|---|
-| v1 | Random Forest, 8 features, depth 7, balanced class weights | 81.7% | 0.77511 |
-| v2 | Random Forest + Title, age-by-title, HasCabin, depth 5 | 83.0% | 0.77272 |
-| **Final** | **Family-group rule (woman-child-group)** | **84.1%** | **0.80143** |
-| Experiment | Blend (RF + XGBoost + LR) + family-rule overrides | 84.5% | 0.78229 |
-| Reference | Gender rule only (all women survive) | 78.7% | 0.76555 |
+> 🏆 **Best Kaggle score: 0.80143** (335 of 418 passengers) with the **family-group rule**
+
+| Rank | Version | Approach | CV accuracy* | Public score |
+|---|---|---|---|---|
+| 🏆 **1** | **Champion** | **Family-group rule (woman-child-group)** | **84.1%** | **🏆 0.80143** |
+| 2 | Experiment | Blend (RF + XGBoost + LR) + family-rule overrides | 84.5% | 0.78229 |
+| 3 | v1 | Random Forest, 8 features, depth 7, balanced class weights | 81.7% | 0.77511 |
+| 4 | v2 | Random Forest + Title, age-by-title, HasCabin, depth 5 | 83.0% | 0.77272 |
+| — | Reference | Gender rule only (all women survive) | 78.7% | 0.76555 |
 
 \*Repeated stratified cross-validation, 5 folds × 5 repeats, on the 891 training passengers.
 
@@ -78,7 +80,7 @@ Notebook: [`Titanic_Experiments_XGBoost_Blending.ipynb`](notebooks/Titanic_Exper
 | Blend (RF + XGBoost + LR probabilities) | 84.42% | +0.29 pts (13 / 1 / 11) |
 | Random Forest + group features + FamilySurvival | 84.40% | +0.27 pts (13 / 6 / 6) |
 | XGBoost + group features + FamilySurvival | 84.29% | +0.16 pts (12 / 2 / 11) |
-| **Family-group rule (submitted, 0.80143)** | **84.13%** | — |
+| 🏆 **Family-group rule (champion, Kaggle 0.80143)** | **84.13%** | — |
 | XGBoost + group features | 83.91% | −0.22 pts |
 | XGBoost, v2 features | 83.39% | −0.74 pts |
 
