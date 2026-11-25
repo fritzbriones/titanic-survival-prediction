@@ -26,6 +26,21 @@ The score is plain accuracy over all 418 test passengers, so each passenger is w
 
 ![Kaggle score by model](images/model_scores.png)
 
+## Key finding
+**The family-group rule captures a genuine, reproducible survival pattern in the Titanic data, but its advantage depends on information about related passengers being available.**
+
+- **Real:** 16 of its 17 changed test predictions were correct, and it beat the gender rule on all 25 cross-validation splits (+5.5 points on average).
+- **Robust:** 8 different ways of defining a family give nearly identical results and test predictions.
+- **Bounded:** on families not seen in training (grouped cross-validation), it adds nothing over the gender rule. It works because 206 of the 418 test passengers have a relative in the training data.
+
+## Limitations
+- **Small data.** 891 training and 418 test passengers; one passenger moves the score by 0.24 points, so differences of a few passengers are noise.
+- **Depends on known relatives.** The family rule can't help passengers with no relatives in the training data, and wouldn't transfer to a new set of people.
+- **Rough family matching.** Families are inferred from surname, ticket, class, port and fare; relatives with different surnames and tickets are missed, and unrelated people could occasionally be grouped.
+- **Survival had a random element.** Factors like location on the ship or timing at the lifeboats aren't in the data, which caps any honest model at roughly 80–82%.
+- **Public leaderboard only.** Scores are from Kaggle's public leaderboard; chasing it with many submissions would risk overfitting to the test set.
+- **No crew.** The data covers passengers only, so findings don't describe the crew's survival.
+
 ## Approach
 
 ### 1. Exploration
